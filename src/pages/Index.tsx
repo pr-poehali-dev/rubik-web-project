@@ -360,10 +360,7 @@ function Game({
 
       {view === '3d' ? (
         <div className="py-2">
-          <Cube3D state={state} n={size} />
-          <p className="font-pixel text-[8px] text-center mt-3 text-muted-foreground">
-            ↔ КРУТИ МЫШКОЙ ЧТОБЫ ОСМОТРЕТЬ
-          </p>
+          <Cube3D state={state} n={size} onMove={doMove} />
         </div>
       ) : (
         <div className="overflow-x-auto pb-2">
