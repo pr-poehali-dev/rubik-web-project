@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import Icon from '@/components/ui/icon';
+import Cube3D from '@/components/Cube3D';
 import {
   CubeState,
   Face,
@@ -228,6 +228,7 @@ function Game({
   const [started, setStarted] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [won, setWon] = useState(false);
+  const [view, setView] = useState<'3d' | '2d'>('3d');
   const startTime = useRef(0);
   const raf = useRef(0);
 
@@ -340,18 +341,44 @@ function Game({
         </div>
       )}
 
-      <div className="overflow-x-auto pb-2">
-        <div
-          className="grid gap-2 mx-auto w-fit"
-          style={{ gridTemplateColumns: 'repeat(4, max-content)', gridTemplateRows: 'repeat(3, max-content)' }}
-        >
-          {grids.map(({ face, pos }) => (
-            <div key={face} style={{ gridColumn: pos[1] + 1, gridRow: pos[0] + 1 }}>
-              <FaceGrid face={face} grid={state[face]} n={size} label />
-            </div>
-          ))}
-        </div>
+      <div className="flex justify-center gap-2 mb-5">
+        {(['3d', '2d'] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className="font-pixel text-[9px] px-4 py-2 rounded border-2 transition-transform hover:scale-105"
+            style={{
+              borderColor: view === v ? NEON.green : 'hsl(258 40% 30%)',
+              color: view === v ? NEON.green : 'hsl(270 25% 70%)',
+              background: view === v ? 'hsl(140 90% 55% / 0.12)' : 'transparent',
+            }}
+          >
+            {v === '3d' ? '🧊 3D' : '🗺 РАЗВЁРТКА'}
+          </button>
+        ))}
       </div>
+
+      {view === '3d' ? (
+        <div className="py-2">
+          <Cube3D state={state} n={size} />
+          <p className="font-pixel text-[8px] text-center mt-3 text-muted-foreground">
+            ↔ КРУТИ МЫШКОЙ ЧТОБЫ ОСМОТРЕТЬ
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto pb-2">
+          <div
+            className="grid gap-2 mx-auto w-fit"
+            style={{ gridTemplateColumns: 'repeat(4, max-content)', gridTemplateRows: 'repeat(3, max-content)' }}
+          >
+            {grids.map(({ face, pos }) => (
+              <div key={face} style={{ gridColumn: pos[1] + 1, gridRow: pos[0] + 1 }}>
+                <FaceGrid face={face} grid={state[face]} n={size} label />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap justify-center gap-3 mt-8">
         <NeonButton onClick={doScramble} color={NEON.pink}>🔀 ПЕРЕМЕШАТЬ</NeonButton>
